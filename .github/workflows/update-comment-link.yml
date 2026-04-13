@@ -1,0 +1,28 @@
+name: Update Issue Comment Link
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  update-comment-link:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run update comment link
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          BRANCH_NAME: ${{ github.event.comment.body }}
+        run: npx tsx src/entrypoints/update-comment-link.ts
